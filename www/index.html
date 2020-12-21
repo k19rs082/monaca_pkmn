@@ -15,12 +15,12 @@
     const pk = "Searchpokemon";
  
     const init_data = [
-      {Name: "サルノリ", Type:"くさ"},
-      {Name: "バチンキー", Type:"くさ"},
-      {Name: "ゴリランダー", Type:"くさ"},
-      {Name: "ヒバニー", Type:"ほのお"},
-      {Name: "ラビフッド", Type:"ほのお"},
-      {Name: "エースバーン", Type:"ほのお"},
+      {Name: "サルノリ", Type:"くさ",No:1},
+      {Name: "バチンキー", Type:"くさ",No:2},
+      {Name: "ゴリランダー", Type:"くさ",No:3},
+      {Name: "ヒバニー", Type:"ほのお",No:4},
+      {Name: "ラビフッド", Type:"ほのお",No:5},
+      {Name: "エースバーン", Type:"ほのお",No:6},
     ];
 
     $(function() {
@@ -33,6 +33,7 @@
             newRecord
             .set("name", init_data[i].Name)
             .set("type", init_data[i].Type)
+            .set("No", init_data[i].No)
             .save();
             // bad busy loop...
             let startMsec = new Date();
@@ -45,28 +46,28 @@
       })
     })
 
+ function fetchAll(){
+      let TestDataClass=ncmb.DataStore(pk);
+      TestDataClass.order("No",false).fetchAll()
+      .then(function(results){
+        showResults(results);
+      })
+    }
 
     function showResults(results) {
       // テーブルのヘッダを生成
-      let msg="<table><tr><th>name</th><th>type</th><th>";
+      let msg="<table><tr><th>name</th><th>type</th><th>No</th>";
       for(let i=0; i<results.length; i++) {
         // 各データを収めた表の列を生成
         msg += "<tr>";
         msg += "<td>" + results[i].Name + "</td>";
         msg += "<td>" + results[i].Type + "</td>";
+        msg += "<td class='num'>" + results[i].No + "</td>";
         msg += "</tr>";
       }
       // テーブルのテイラを生成
       msg += "</table>";
       $("#message").html(msg);
-    }
-
-    function fetchAll(){
-      let TestDataClass=ncmb.DataStore(pk);
-      TestDataClass.order("name",false).fetchAll()
-      .then(function(results){
-        showResults(results);
-      })
     }
 
     function searchName(){
@@ -92,7 +93,7 @@
     </script>
 </head>
 <body>
-  <h1>mBaaS search</h1>
+  <h1>monaca pkmn</h1>
   <div>
     <label for="name">Name:</label>
     <input id="name" type="text" placeholder="monster name">
