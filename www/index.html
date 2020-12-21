@@ -1,0 +1,111 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta http-equiv="Content-Security-Policy" content="default-src * data: gap: content: https://ssl.gstatic.com; style-src * 'unsafe-inline'; script-src * 'unsafe-inline' 'unsafe-eval'">
+    <script src="components/loader.js"></script>
+    <link rel="stylesheet" href="components/loader.css">
+    <link rel="stylesheet" href="css/style.css">
+    <script src="keys.js"></script>
+    <script>
+    
+    let ncmb = new NCMB(appKey, clientKey);
+   
+    const pk = "Searchpokemon";
+ 
+    const init_data = [
+      {Name: "サルノリ", Type:"くさ"},
+      {Name: "バチンキー", Type:"くさ"},
+      {Name: "ゴリランダー", Type:"くさ"},
+      {Name: "ヒバニー", Type:"ほのお"},
+      {Name: "ラビフッド", Type:"ほのお"},
+      {Name: "エースバーン", Type:"ほのお"},
+    ];
+
+    $(function() {
+      let TestDataClass = ncmb.DataStore(pk);
+      TestDataClass.fetchAll() 
+      .then(function(results){
+        if(results.length < init_data.length) { 
+          for(let i=0; i<init_data.length; i++) { 
+            let newRecord = new TestDataClass();
+            newRecord
+            .set("name", init_data[i].Name)
+            .set("type", init_data[i].Type)
+            .save();
+            // bad busy loop...
+            let startMsec = new Date();
+            while(new Date() - startMsec < 1000);
+          }
+          $("#message").html("Test DB initialized.");
+        } else {
+          $("#message").html("Test DB already exists.");
+        }
+      })
+    })
+
+
+    function showResults(results) {
+      // テーブルのヘッダを生成
+      let msg="<table><tr><th>name</th><th>type</th><th>";
+      for(let i=0; i<results.length; i++) {
+        // 各データを収めた表の列を生成
+        msg += "<tr>";
+        msg += "<td>" + results[i].Name + "</td>";
+        msg += "<td>" + results[i].Type + "</td>";
+        msg += "</tr>";
+      }
+      // テーブルのテイラを生成
+      msg += "</table>";
+      $("#message").html(msg);
+    }
+
+    function fetchAll(){
+      let TestDataClass=ncmb.DataStore(pk);
+      TestDataClass.order("name",false).fetchAll()
+      .then(function(results){
+        showResults(results);
+      })
+    }
+
+    function searchName(){
+      let Name=$("#name").val();
+      let TestDataClass=ncmb.DataStore(pk);
+      TestDataClass
+      .equalTo("name",Name)
+      .fetchAll()
+      .then(function(results){
+        showResults(results);
+      })
+    }
+    function searchType(){
+      let Type=$("#type").val();
+      let TestDataClass=ncmb.DataStore(pk);
+      TestDataClass
+      .equalTo("type",Type)
+      .fetchAll()
+      .then(function(results){
+        showResults(results);
+      })
+    }
+    </script>
+</head>
+<body>
+  <h1>mBaaS search</h1>
+  <div>
+    <label for="name">Name:</label>
+    <input id="name" type="text" placeholder="monster name">
+  </div>
+  <div>
+    <label for="type">Type:</label>
+    <input id="type" type="text" placeholder="monster type">
+  </div>
+  <div id="button">
+    <button class="btn" onclick="fetchAll()">Fetch</button>
+    <button class="btn" onclick="searchName()">Name</button>
+    <button class="btn" onclick="searchType()">Type</button>
+  </div>
+  <div id="message">initializing...</div>
+</body>
+</html>
