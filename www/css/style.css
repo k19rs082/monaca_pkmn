@@ -1,9 +1,9 @@
 /**/
 body {
-  background-color: pink;
+  background-color: rgb(192, 255, 250);
 }
 h1 {
-  background-color: yellow;
+  background-color: rgb(52, 235, 128);
 }
 
 label {

@@ -167,10 +167,40 @@
       })
     }
     function searchType(){
-      let level=$("#Type").val();
+      let Type=$("#Type").val();
       let TestDataClass=ncmb.DataStore(db);
       TestDataClass
       .equalTo("Type",Type)
+      .fetchAll()
+      .then(function(results){
+        showResults(results);
+      })
+    }
+     function searchNo(){
+      let No=parseInt($("#No").val(),10);
+      let TestDataClass=ncmb.DataStore(db);
+      TestDataClass
+      .equalTo("No",No)
+      .fetchAll()
+      .then(function(results){
+        showResults(results);
+      })
+    }
+    function searchNoLT(){
+      let No=parseInt($("#No").val(),10);
+      let TestDataClass=ncmb.DataStore(db);
+      TestDataClass
+      .lessThan("No",No)
+      .fetchAll()
+      .then(function(results){
+        showResults(results);
+      })
+    }
+function searchNoGT(){
+      let No=parseInt($("#No").val(),10);
+      let TestDataClass=ncmb.DataStore(db);
+      TestDataClass
+      .greaterThan("No",No)
       .fetchAll()
       .then(function(results){
         showResults(results);
@@ -186,13 +216,21 @@
     <input id="name" type="text" placeholder="monster name">
   </div>
   <div>
-    <label for="Type">level:</label>
+    <label for="Type">Type:</label>
     <input id="Type" type="text" placeholder="monster Type">
+  </div>
+  <div>
+    <label for="No">No:</label>
+    <input id="No" type="number" placeholder="monster No">
   </div>
   <div id="button">
     <button class="btn" onclick="fetchAll()">Fetch All</button>
     <button class="btn" onclick="searchName()">Name</button>
     <button class="btn" onclick="searchType()">Type</button>
+    <br>
+    <button class="btn" onclick="searchNoLT()"> &lt</button>
+    <button class="btn" onclick="searchNo()">No</button>
+    <button class="btn" onclick="searchNoGT()"> &gt</button>
   </div>
   <div id="message">initializing...</div>
 </body>
